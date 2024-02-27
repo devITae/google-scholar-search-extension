@@ -1,0 +1,17 @@
+{
+    "name": "Google Scholar Search Helper",
+    "description": "Authorized Google Scholar Data Crawling Extension",
+    "version": "1.0",
+    "manifest_version": 3,
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": "hello_extensions.png"
+    },
+    "host_permissions": [
+        "https://*/*"
+    ],
+    "permissions": [
+        "activeTab",
+        "tabs"
+    ]
+}

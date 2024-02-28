@@ -6,7 +6,7 @@
 It is a Chrome extension that crawls search results from Google Scholar and exports them to CSV.
 
 
-## Initialize
+## Installation
 
 다운로드 후, [`chrome://extensions/`](chrome://extensions/) 에 접속하여 압축해제 된 확장프로그램을 로드합니다.
 
@@ -22,6 +22,9 @@ It works by pressing the START button with the Google Scholar's Search Results t
 
 - [serpapi-google-scholar-search](https://github.com/chihyeonE/serpapi-google-scholar-search) by [Chihyeon Kim](https://github.com/chihyeonE)
 - [Chrome Extensions samples](https://github.com/GoogleChrome/chrome-extensions-samples) by [Google Chrome](https://github.com/GoogleChrome)
+
+## License
+`google-scholar-search-extension` are licensed under the [MIT License](https://github.com/devITae/google-scholar-search-extension/blob/main/LICENSE).
 
 ## Author
 

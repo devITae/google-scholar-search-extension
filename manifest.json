@@ -5,7 +5,10 @@
     "manifest_version": 3,
     "action": {
         "default_popup": "popup.html",
-        "default_icon": "hello_extensions.png"
+        "default_icon": "icon.png"
+    },
+    "icons": {
+        "128": "icon128.png"
     },
     "host_permissions": [
         "https://*/*"

@@ -18,9 +18,16 @@ function makeURL(statusText){
   return URL;
 }
 
+// 검색어
+function searchKeyword(statusText){
+  var keyword = decodeURI(statusText.split('q=')[1].split('&')[0]).replace('+', ' ');
+  return keyword;
+}
+
 // 크롤링 한 데이터를 담는 배열
 const data = [];
 
+// 크롤링 함수
 async function crawl(url) {
   // 수집중인 URL
   const decodedUrl = decodeURI(url);
@@ -64,27 +71,27 @@ async function crawl(url) {
       console.log(element);
       let title = element.querySelector('h3.gs_rt > a');
       let url = element.querySelector('h3.gs_rt > a');
-      let cites = element.querySelector('div.gs_flb > [href*="/scholar?cites="]');
+      let citation = element.querySelector('div.gs_flb > [href*="/scholar?cites="]');
 
       if(title != null) {
         title = title.textContent;
         url = url.href;
       } else {
-        title = element.querySelector('h3.gs_rt > span')[1].textContent;
+        title = element.querySelector('h3.gs_rt').textContent;
         url = '';
       }
 
-      if(cites != null){
-        cites = cites.textContent.replace(/[^0-9]/g, '');
+      if(citation != null){
+        citation = citation.textContent.replace(/[^0-9]/g, '');
       } else{
-        cites = 0;
+        citation = 0;
       }
-      console.log(cites);
+      console.log(citation);
       // 추출한 데이터를 배열에 저장
       data.push({
         title,
         url,
-        cites
+        citation
       });
       //console.log(element);
     })
@@ -98,10 +105,46 @@ function renderUrl(statusText) {
   var isGoogleSchoalr = statusText.includes('https://scholar.google');
 
   if(isGoogleSchoalr) {
-    document.getElementById('result').textContent = makeURL(statusText);
+    document.getElementById('result').textContent = 'Crawling.... Just a moment.'
   } else{
     document.getElementById('result').textContent = 'This page is not Google Scholar.';
   }
+}
+
+// CSV로 배열 추출
+function makeCSV(TITLE){
+  const jsonData = JSON.stringify(data);
+  let arrData = JSON.parse(jsonData);
+
+  let CSV = '';
+  //CSV += TITLE + '\r\n\n';
+
+  let row = "";
+  for (let index in arrData[0]) {
+      row += index + ',';
+  }
+  row = row.slice(0, -1);
+  CSV += row + '\r\n';
+
+  for (let i = 0; i < arrData.length; i++) {
+    let row = "";
+    for (let index in arrData[i]) {
+        row += '"' + arrData[i][index] + '",';
+    }
+
+    row.slice(0, row.length - 1);
+    CSV += row + '\r\n';
+  }
+
+  let uri = 'data:text/csv;charset=utf-8,\uFEFF' + encodeURI(CSV);
+  let link = document.createElement("a");    
+    link.href = uri;
+    link.style = "visibility:hidden";
+    link.download = TITLE + ".csv";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
 // 클릭 이벤트가 발생했을 경우 getTabUrl와 renderUrl 함수를 사용해
@@ -116,6 +159,8 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(() => {
           console.log('크롤링 완료');
           console.log(JSON.stringify(data, null, 2));
+          document.getElementById('result').textContent = 'Complete.'
+          makeCSV(searchKeyword(url));
         })
         .catch(err => console.error(err));
     });

@@ -65,13 +65,17 @@ async function crawl(url) {
     const htmlDOM = parser.parseFromString(htmlString, 'text/html');
     // 검색 결과 가공
     const contents = htmlDOM.getElementById('gs_res_ccl_mid');
-    const oneData = contents.querySelectorAll('.gs_ri');
+    const oneData = contents.querySelectorAll('.gs_r');
 
-    oneData.forEach((element)=>{
-      console.log(element);
+    oneData.forEach((elementData)=>{
+      console.log(elementData);
+      const element = elementData.querySelector('div.gs_ri');
       let title = element.querySelector('h3.gs_rt > a');
       let url = element.querySelector('h3.gs_rt > a');
       let citation = element.querySelector('div.gs_flb > [href*="/scholar?cites="]');
+      let author = element.querySelector('div.gs_a');
+      let publish = element.querySelector('div.gs_a');
+      let journal = elementData.querySelector('div.gs_ggs > div.gs_ggsd > div.gs_or_ggsm > a');
 
       if(title != null) {
         title = title.textContent;
@@ -81,17 +85,35 @@ async function crawl(url) {
         url = '';
       }
 
-      if(citation != null){
-        citation = citation.textContent.replace(/[^0-9]/g, '');
-      } else{
-        citation = 0;
-      }
-      console.log(citation);
+      if(citation != null) citation = citation.textContent.replace(/[^0-9]/g, '');
+      else citation = 0;
+      
+      if(journal != null) journal = journal.textContent.replace('[PDF] ', '');
+      else journal = '';
+
+      if(author != null) author = author.textContent.split(' - ')[0].split(',')[0];
+      else author = '';
+
+
+      if(publish != null) {
+        if(publish.textContent.match(/\d{4} -/g)) {
+          publish = publish.textContent.match(/\d{4} -/g)[0].replace(' -', '');
+        }
+        else if(publish.textContent.match(/\d{4}/g)) {
+          publish = publish.textContent.match(/\d{4}/g)[0];
+        } 
+        else publish = '';
+      } 
+      else publish = '';
+
       // 추출한 데이터를 배열에 저장
       data.push({
         title,
-        url,
-        citation
+        author,
+        journal,
+        publish,
+        citation,
+        url
       });
       //console.log(element);
     })
